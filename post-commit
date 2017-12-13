@@ -1,0 +1,12 @@
+#!/bin/sh
+#
+# post-commit hook, runs after commit
+#
+
+FULL_SCRIPT="./restore-user-cproj.sh"
+
+if [ -e $FULL_SCRIPT ] ; then
+	exec "$FULL_SCRIPT"
+else
+	echo "Warning: Missing *.cproj cleaning script '$FULL_SCRIPT'. (Are you up to date with master?)"
+fi
