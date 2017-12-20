@@ -6,6 +6,24 @@ from xml.etree import ElementTree
 
 
 NAMESPACE = "http://schemas.microsoft.com/developer/msbuild/2003"
+INDENT_UNIT = "  "
+
+
+def indent(elem, level=0):
+    """Copied from http://effbot.org/zone/element-lib.htm#prettyprint"""
+    i = "\n" + level * INDENT_UNIT
+    if len(elem):
+        if not elem.text or not elem.text.strip():
+            elem.text = i + INDENT_UNIT
+        if not elem.tail or not elem.tail.strip():
+            elem.tail = i
+        for elem in elem:
+            indent(elem, level + 1)
+        if not elem.tail or not elem.tail.strip():
+            elem.tail = i
+    else:
+        if level and (not elem.tail or not elem.tail.strip()):
+            elem.tail = i
 
 
 def search(element, path, search_tag, text, level=0):
@@ -42,10 +60,8 @@ def run_script(file_path, target_elements):
         print("No element changes to make.")
 
     print("Writing formatted XML...")
-    project_tree.write(file_path, encoding='UTF-8', xml_declaration=True)
-    # Add ending new-line manually since ElementTree.write doesn't bother
-    with open(file_path, 'a') as handle:
-        handle.write('\n')
+    indent(root)
+    project_tree.write(file_path, encoding="UTF-8", xml_declaration=True)
 
 
 def main():
